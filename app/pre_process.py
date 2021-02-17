@@ -8,7 +8,7 @@ from haystack.reader.farm import FARMReader
 from haystack.reader.transformers import TransformersReader
 from haystack.retriever.sparse import ElasticsearchRetriever
 
-from . import query_Handler
+from . import query_handler
 
 def process(document_store):
 
@@ -29,7 +29,7 @@ def process(document_store):
     #
     # They use some simple but fast algorithm.
     # Elasticsearch's default BM25 algorithm is used
-
+    print("preparing retriever")
     retriever = ElasticsearchRetriever(document_store=document_store)
 
     # ### Reader
@@ -44,7 +44,7 @@ def process(document_store):
     # **Alternatives (Reader):** TransformersReader (leveraging the `pipeline` of the Transformers package)
     # **Alternatives (Models):** e.g. "distilbert-base-uncased-distilled-squad" (fast) or
     #                            "deepset/bert-large-uncased-whole-word-masking-squad2" (good accuracy)
-
+    print("preparing reader")
     reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=False)
 
     # #### TransformersReader
@@ -72,6 +72,7 @@ def process(document_store):
     # p = Pipeline()
     # p.add_node(component=retriever, name="ESRetriever1", inputs=["Query"])
     # p.add_node(component=reader, name="QAReader", inputs=["ESRetriever1"])
+    print("pipe retriever")
     p = ExtractiveQAPipeline(reader, retriever)
-    query_Handler.pipe = p
+    query_handler.pipe = p
 
