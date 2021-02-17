@@ -24,7 +24,7 @@ def upload():
 
 @app.route('/', methods=['GET'])
 def query():
-    app.logger.info("Receiving a POST request")
+    app.logger.info("Receiving a GET request")
     query = request.args.get("query")
     app.logger.info("Handling query: " + query)
     if not query:

@@ -45,11 +45,13 @@ def process(document_store):
     # **Alternatives (Models):** e.g. "distilbert-base-uncased-distilled-squad" (fast) or
     #                            "deepset/bert-large-uncased-whole-word-masking-squad2" (good accuracy)
     print("preparing reader")
-    reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=False)
+    # reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=False)
 
     # #### TransformersReader
     # reader = TransformersReader(
     #     model_name_or_path="distilbert-base-uncased-distilled-squad", tokenizer="distilbert-base-uncased", use_gpu=-1)
+    reader = TransformersReader(
+        model_name_or_path="deepset/roberta-base-squad2", tokenizer="deepset/roberta-base-squad2", use_gpu=-1)
 
     # Some default pipes that can be chosen from
     # Extractive QA
