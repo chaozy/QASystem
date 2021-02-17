@@ -1,6 +1,6 @@
 # The file acts as the entry point to the API
 
 from app.app import app
-print("enter wsgi.py")
 if __name__ == "__main__":
-    app.run(debug=True, port=5000, threaded=True)
+    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+    
