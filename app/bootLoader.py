@@ -1,11 +1,9 @@
-# from haystack.file_converter.docx import DocxToTextConverter
 from haystack.file_converter.docx import DocxToTextConverter
 from haystack.file_converter.pdf import PDFToTextConverter
 from haystack.file_converter.txt import TextConverter
 from haystack.preprocessor.preprocessor import PreProcessor
 
-from . import basicQA
-
+from . import pre_process
 """
 @param filePath: Path to the file you want to convert
 @return : Dict[str, Any]
@@ -40,12 +38,8 @@ def docPreProcess(doc):
     doc = processor.process(doc)
     return doc
 
-def run(filePath, query):
+def run(filePath):
     doc = docPrepare(filePath)
     doc = docPreProcess(doc)
-    return basicQA.basic_qa_pipeline(doc, query)
+    pre_process.process(doc)
 
-# Press the green button in the gutter to run the script.
-# if __name__ == '__main__':
-#     filePath = "AppleAnnualReport.pdf"
-#     run(filePath)

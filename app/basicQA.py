@@ -26,23 +26,16 @@ from haystack.retriever.sparse import ElasticsearchRetriever
 def basic_qa_pipeline(file, query):
     logger = logging.getLogger(__name__)
 
-    LAUNCH_ELASTICSEARCH = True
+    LAUNCH_ELASTICSEARCH = False
     # ## Document Store
     #
     # Haystack finds answers to queries within the documents stored in a `DocumentStore`. The current implementations of
     # `DocumentStore` include `ElasticsearchDocumentStore`, `FAISSDocumentStore`, `SQLDocumentStore`, and `InMemoryDocumentStore`.
     #
-    # **Here:** We recommended Elasticsearch as it comes preloaded with features like full-text queries, BM25 retrieval,
+    # Elasticsearch is recommended as it comes preloaded with features like full-text queries, BM25 retrieval,
     # and vector storage for text embeddings.
-    # **Alternatives:** If you are unable to setup an Elasticsearch instance, then follow the Tutorial 3
-    # for using SQL/InMemory document stores.
-    # **Hint**:
-    # This tutorial creates a new document store instance with Wikipedia articles on Game of Thrones. However, you can
-    # configure Haystack to work with your existing document stores.
-    #
+
     # Start an Elasticsearch server
-    # You can start Elasticsearch on your local machine instance using Docker. If Docker is not readily available in
-    # your environment (eg., in Colab notebooks), then you can manually download and execute Elasticsearch from source.
 
     if LAUNCH_ELASTICSEARCH:
         logging.info("Starting Elasticsearch ...")
@@ -56,26 +49,6 @@ def basic_qa_pipeline(file, query):
 
     # Connect to Elasticsearch
     document_store = ElasticsearchDocumentStore(host="localhost", username="", password="", index="document")
-    # ## Preprocessing of documents
-    #
-    # Haystack provides a customizable pipeline for:
-    # - converting files into texts
-    # - cleaning texts
-    # - splitting texts
-    # - writing them to a Document Store
-
-
-    # Let's first fetch some documents that we want to query
-    # Here: 517 Wikipedia articles for Game of Thrones
-    # doc_dir = "data/article_txt_got"
-    # s3_url = "https://s3.eu-central-1.amazonaws.com/deepset.ai-farm-qa/datasets/documents/wiki_gameofthrones_txt.zip"
-    # fetch_archive_from_http(url=s3_url, output_dir=doc_dir)
-
-    # convert files to dicts containing documents that can be indexed to our datastore
-    # dicts = convert_files_to_dicts(dir_path=doc_dir, clean_func=clean_wiki_text, split_paragraphs=True)
-    print("finish dicts covert")
-    # You can optionally supply a cleaning function that is applied to each doc (e.g. to remove footers)
-    # It must take a str as input, and return a str.
 
     # Now, let's write the docs to our DB.
     if LAUNCH_ELASTICSEARCH:
@@ -83,7 +56,7 @@ def basic_qa_pipeline(file, query):
     else:
         logger.warning("Since we already have a running ES instance we should not index the same documents again. \n"
                        "If you still want to do this call: document_store.write_documents(dicts) manually ")
-
+    document_store.write_documents(file)
     # ## Initalize Retriever, Reader,  & Finder
     #
     # ### Retriever
@@ -122,15 +95,8 @@ def basic_qa_pipeline(file, query):
     # **Hint:** You can adjust the model to return "no answer possible" with the no_ans_boost. Higher values mean
     #           the model prefers "no answer possible"
     #
-    # #### FARMReader
 
-    # Load a  local model or any of the QA models on
-    # Hugging Face's model hub (https://huggingface.co/models)
-    # reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=True)
-    print("finish farmreader")
     # #### TransformersReader
-
-    # Alternative:
     reader = TransformersReader(
        model_name_or_path="distilbert-base-uncased-distilled-squad", tokenizer="distilbert-base-uncased", use_gpu=-1)
 
@@ -140,16 +106,9 @@ def basic_qa_pipeline(file, query):
 
     finder = Finder(reader, retriever)
 
-    # ## Voilà! Ask a question!
-    # You can configure how many candidates the reader and retriever shall return
-    # The higher top_k_retriever, the better (but also the slower) your answers.
+    # Deriving the predicted answers from the finder
     prediction = finder.get_answers(question=query, top_k_retriever=10, top_k_reader=5)
 
-
-    # prediction = finder.get_answers(question="Who created the Dothraki vocabulary?", top_k_reader=5)
-    # prediction = finder.get_answers(question="Who is the sister of Sansa?", top_k_reader=5)
-
-    # print_answers(prediction, details="minimal")
     return prediction
 
 
