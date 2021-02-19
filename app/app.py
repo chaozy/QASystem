@@ -26,9 +26,9 @@ def upload():
 def query():
     app.logger.info("Receiving a GET request")
     query = request.args.get("query")
-    app.logger.info("Handling query: " + query)
     if not query:
         raise Exception("Query is missing")
+    app.logger.info("Handling query: " + query)
 
     if query == "END":
         query_handler.pipe = None

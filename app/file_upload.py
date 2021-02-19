@@ -1,4 +1,5 @@
 import shutil
+import os
 from fastapi import HTTPException
 from haystack.document_store.elasticsearch import ElasticsearchDocumentStore
 
@@ -71,4 +72,5 @@ def file_upload(file):
         document_store.write_documents(documents)
         return document_store
     finally:
+        os.remove(file_path)
         buffer.close()
