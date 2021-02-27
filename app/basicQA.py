@@ -107,7 +107,7 @@ def basic_qa_pipeline(file, query):
     finder = Finder(reader, retriever)
 
     # Deriving the predicted answers from the finder
-    prediction = finder.get_answers(question=query, top_k_retriever=10, top_k_reader=5)
+    prediction = finder.get_answers(question=query, top_k_retriever=5, top_k_reader=3)
 
     return prediction
 

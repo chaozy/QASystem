@@ -34,6 +34,7 @@ document_store = ElasticsearchDocumentStore(
 )
 
 
+
 def file_upload(file):
     try:
         file_path = '/tmp/' + file.name + '_tmp'

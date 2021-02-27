@@ -5,6 +5,7 @@ from flask import jsonify
 from . import query_handler
 from . import file_upload
 from . import pre_process
+from . import utils
 
 app = Flask(__name__)
 
@@ -32,9 +33,19 @@ def query():
 
     if query == "END":
         query_handler.pipe = None
+        # Clean the ES
+        file_upload.document_store.delete_all_documents(index='document')
         return "successfully terminated"
     else:
         res = query_handler.processQuery(query)
+        top = res['answers'][0]
+        top_ans = top['answer']
+        top_context = top['context']
+        top_context = utils.truncate(top_context)
+        res = utils.get_answers(res, details='minimal')
         app.logger.info(res)
-        res = res['answers']
+
+        res = {}
+        res['answer'] = top_ans
+        res['context'] = top_context
         return jsonify(res)
