@@ -41,7 +41,6 @@ def query():
         top = res['answers'][0]
         top_ans = top['answer']
         top_context = top['context']
-        top_context = utils.truncate(top_context)
         res = utils.get_answers(res, details='minimal')
         app.logger.info(res)
 
