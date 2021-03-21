@@ -62,7 +62,6 @@ def file_upload(file):
             clean_empty_lines=REMOVE_EMPTY_LINES,
             split_by=SPLIT_BY,
             split_length=SPLIT_LENGTH,
-            split_overlap=SPLIT_OVERLAP,
             split_respect_sentence_boundary=SPLIT_RESPECT_SENTENCE_BOUNDARY,
         )
 
